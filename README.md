@@ -1,6 +1,10 @@
 ### Study Goal
-  is to predict/classify the manner in which the 6 participants did the exercise by using data from accelerometers on the belt, forearm, arm, and dumbell. 
-  
+It is to predict/classify the manner in which the 6 participants did the exercise by using data from accelerometers on the belt, forearm, arm, and dumbell. 
+### Data
+The training data for this project are available here:
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
+The test data are available here:
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv 
 #### The classification processes with the given sampling data
 ##### 1. Split data into training and test set as 60% vs. 40%
 ##### 2. Build prediction function by 
@@ -61,4 +65,6 @@ Confusion Matrix and Statistics
 ##### 4. Tuning the model and prediction:  using Caret Train function only mtry parameter is available 
 in caret for tuning. The default control setting was used in this study.
     A. default controlcontrol <- trainControl(method="repeatedcv", number=10, repeats=3)
-    B. the rf model was applied to predict/classy the final 20 test samples in quiz and it is 100% accurate.
+    B. the rf model was applied to predict/classy the final 20 test samples in quiz and it is 100% accurate. Prediction results are:
+    predict(fit_rf,pml_testing6)  
+   
