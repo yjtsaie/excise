@@ -1,0 +1,60 @@
+# excise
+Study Goal
+  is to predict/classify the manner in which the 6 participants did the exercise by using data from accelerometers on the belt, forearm, arm, and dumbell. 
+  
+#### The classification processes with the given sampling data
+##### 1. Split data into ttraining and test set as 60% vs. 40%
+##### 2. Build prediction function by 
+    A. remove vaiables which do not provide information for model: booking information, very high NA ratio variable, near zero variaance, high correlated variable (>75%)
+    B.transform by "center and scale" for not to impact the modeling results
+######   The final data set inlcudes 34 predictors (and one dependent variable) reducing from original 160 predictors.  Number of data samples in training set is 11776 and testing set is 7846.
+
+                     sample training testing final training  
+                    ------ -------- ------- --------------  
+      sample number  19622    11776    7846          11776
+      predictors      160      160     160             35  
+
+##### 3 Model select
+    With final 31 predictors, 7 models (rpart, linear Dscriminant Analysis, naive Bayes, SVM, random forester, gbm bagging, ) were tried to obtain the best fit model with testing data set. The randome forest came out as best accuarte model.  The combined model for the models having accuarcy >90% was also studied, but its result is not as good as random forester model.  The accuacy data are
+    
+                rpart_acc   lda_acc   nb_acc   svm_acc    rf_acc   gbm_acc   bag_acc 
+                ---------  ---------  -------  --------  --------  --------  --------
+       Accuracy 0.4969411  0.5850115  0.206857 0.9130767 0.9847056 0.9121846 0.9573031
+
+
+Confusion Matrix and Statistics
+
+       Prediction    A    B    C    D    E
+                A 2223   18    2    0    0  
+                B    6 1488   20    0    0  
+                C    0   11 1340   37    1  
+                D    2    0    6 1248   14  
+                E    1    1    0    1 1427  
+
+  Overall Statistics
+                                          
+               Accuracy : 0.9847          
+                 95% CI : (0.9817, 0.9873)
+    No Information Rate : 0.2845          
+    P-Value [Acc > NIR] : < 2.2e-16       
+                                          
+                  Kappa : 0.9807          
+   Mcnemar's Test P-Value : NA              
+
+   Statistics by Class:
+
+                           Class: A Class: B Class: C Class: D Class: E  
+      Sensitivity            0.9960   0.9802   0.9795   0.9705   0.9896 
+      Specificity            0.9964   0.9959   0.9924   0.9966   0.9995 
+      Pos Pred Value         0.9911   0.9828   0.9647   0.9827   0.9979  
+      Neg Pred Value         0.9984   0.9953   0.9957   0.9942   0.9977 
+      Prevalence             0.2845   0.1935   0.1744   0.1639   0.1838  
+      Detection Rate         0.2833   0.1897   0.1708   0.1591   0.1819 
+      Detection Prevalence   0.2859   0.1930   0.1770   0.1619   0.1823 
+      Balanced Accuracy      0.9962   0.9881   0.9860   0.9835   0.9946
+
+##### 4. Tuning the model and prediction:  using Caret Train function only mtry parameter is available in caret for tuning. The default control setting was used in this study.
+    A. default controlcontrol <- trainControl(method="repeatedcv", number=10, repeats=3)
+    B. the rf model was applied to predict/classy the final 20 test samples in quiz and it is 100% accuarate. Prediction results are:
+    predict(fit_rf,pml_testing6)  
+    B A B A A E D B A A B C B A E E A B B B
