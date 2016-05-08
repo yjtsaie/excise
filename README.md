@@ -7,7 +7,7 @@ The test data are available here:
 https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv 
 #### The classification processes with the given sampling data
 ##### 1. Split data into training and test set as 60% vs. 40%
-##### 2. Build prediction function by 
+##### 2. Preprocess the data to identify better predictors
 A.	remove variables which do not provide information for model: booking information, 
 very high NA ratio variable, near zero variance, high correlated variable (>75%)
 B.	transform by "center and scale" for not to impact the modeling results
