@@ -1,13 +1,15 @@
-# excise
-Study Goal
+### Study Goal
   is to predict/classify the manner in which the 6 participants did the exercise by using data from accelerometers on the belt, forearm, arm, and dumbell. 
   
 #### The classification processes with the given sampling data
-##### 1. Split data into ttraining and test set as 60% vs. 40%
+##### 1. Split data into training and test set as 60% vs. 40%
 ##### 2. Build prediction function by 
-    A. remove vaiables which do not provide information for model: booking information, very high NA ratio variable, near zero variaance, high correlated variable (>75%)
-    B.transform by "center and scale" for not to impact the modeling results
-######   The final data set inlcudes 34 predictors (and one dependent variable) reducing from original 160 predictors.  Number of data samples in training set is 11776 and testing set is 7846.
+A.	remove variables which do not provide information for model: booking information, 
+very high NA ratio variable, near zero variance, high correlated variable (>75%)
+B.	transform by "center and scale" for not to impact the modeling results
+######   The final data set includes 34 predictors (and one dependent variable) reducing from 
+original 160 predictors.
+ Number of data samples in training set is 11776 and testing set is 7846.
 
                      sample training testing final training  
                     ------ -------- ------- --------------  
@@ -15,7 +17,10 @@ Study Goal
       predictors      160      160     160             35  
 
 ##### 3 Model select
-    With final 31 predictors, 7 models (rpart, linear Dscriminant Analysis, naive Bayes, SVM, random forester, gbm bagging, ) were tried to obtain the best fit model with testing data set. The randome forest came out as best accuarte model.  The combined model for the models having accuarcy >90% was also studied, but its result is not as good as random forester model.  The accuacy data are
+    With final 31 predictors, 7 models (rpart, linear Dscriminant Analysis, naive Bayes, SVM, random forester, 
+gbm bagging, ) were tried to obtain the best fit model with testing data set. The random forest came out 
+as the best accurate model.  The combined model for the models having accuarcy >90% was also studied, 
+but its result is not as good as random forester model.  The accuacy data are
     
                 rpart_acc   lda_acc   nb_acc   svm_acc    rf_acc   gbm_acc   bag_acc 
                 ---------  ---------  -------  --------  --------  --------  --------
@@ -53,8 +58,7 @@ Confusion Matrix and Statistics
       Detection Prevalence   0.2859   0.1930   0.1770   0.1619   0.1823 
       Balanced Accuracy      0.9962   0.9881   0.9860   0.9835   0.9946
 
-##### 4. Tuning the model and prediction:  using Caret Train function only mtry parameter is available in caret for tuning. The default control setting was used in this study.
+##### 4. Tuning the model and prediction:  using Caret Train function only mtry parameter is available 
+in caret for tuning. The default control setting was used in this study.
     A. default controlcontrol <- trainControl(method="repeatedcv", number=10, repeats=3)
-    B. the rf model was applied to predict/classy the final 20 test samples in quiz and it is 100% accuarate. Prediction results are:
-    predict(fit_rf,pml_testing6)  
-    B A B A A E D B A A B C B A E E A B B B
+    B. the rf model was applied to predict/classy the final 20 test samples in quiz and it is 100% accurate.
