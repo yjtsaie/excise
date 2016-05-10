@@ -30,6 +30,7 @@ but its result is not as good as random forester model.  The accuacy data are
                 ---------  ---------  -------  --------  --------  --------  --------
        Accuracy 0.4969411  0.5850115  0.206857 0.9130767 0.9847056 0.9121846 0.9573031
 
+###### Random Forester Model is selected as final model to use. Its OOB estimate of error rate equals 1.3%. Additional accuacy infomation follows:
 
 Confusion Matrix and Statistics
 
@@ -62,9 +63,31 @@ Confusion Matrix and Statistics
       Detection Prevalence   0.2859   0.1930   0.1770   0.1619   0.1823 
       Balanced Accuracy      0.9962   0.9881   0.9860   0.9835   0.9946
 
+
+The top 20 important predictors are
+magnet_dumbbell_z 100.00
+pitch_forearm 82.26
+magnet_belt_y 81.00
+roll_dumbbell 73.96
+roll_forearm 72.30
+roll_arm 53.73
+gyros_belt_z 53.71
+total_accel_dumbbell 50.61
+yaw_dumbbell 49.87
+gyros_dumbbell_y 49.34
+total_accel_belt 48.84
+accel_forearm_x 45.75
+pitch_dumbbell 44.87
+magnet_forearm_z 42.65
+magnet_arm_x 42.64
+magnet_forearm_y 36.46
+magnet_belt_x 36.32
+yaw_arm 35.21
+magnet_forearm_x 34.87
+accel_forearm_z 33.96
+
 ##### 4. Tuning the model and prediction:  using Caret Train function only mtry parameter is available 
 in caret for tuning. The default control setting was used in this study.
     A. default controlcontrol <- trainControl(method="repeatedcv", number=10, repeats=3)
-    B. the rf model was applied to predict/classy the final 20 test samples in quiz and it is 100% accurate. Prediction results are:
-    predict(fit_rf,pml_testing6)  
-   
+    B. the rf model was applied to predict/classy the final 20 test samples in quiz and it is 100% accurate. Prediction results are:   B A B A A E D B A A B C B A E E A B B B
+ 
