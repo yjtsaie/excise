@@ -1,4 +1,6 @@
-### Study Goal
+## Write Up for This Study
+
+###Study Goal
 It is to predict/classify the manner in which the 6 participants did the exercise by using data from accelerometers on the belt, forearm, arm, and dumbell. 
 ### Data
 The training data for this project are available here:
