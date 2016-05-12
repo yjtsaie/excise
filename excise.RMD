@@ -1,5 +1,5 @@
 ---
-title: "Classfy Excise Manner"
+title: "Classify Excise Manner"
 author: "yjtsaie"
 output: 
   html_document: 
