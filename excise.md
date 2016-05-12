@@ -1,4 +1,4 @@
-# Classfy Excise Manner
+# Classify Excise Manner
 yjtsaie  
 
 
