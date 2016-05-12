@@ -1,0 +1,215 @@
+---
+title: "Classfy Excise Manner"
+author: "yjtsaie"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T)
+```
+### Study Goal
+  is to predict/classify the manner in which the 6 participants did the exercise by using data from accelerometers on the belt, forearm, arm, and dumbell. 
+
+Data
+The training data for this project are available here:
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
+The test data are available here:
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
+
+#### The classification processes with the given sampling data
+##### 1. Split data into ttraining and test set as 60% vs. 40%
+##### 2. Build prediction function by 
+    A. remove vaiables which do not provide information for model: booking information, very high NA ratio variable, near zero variaance, high correlated variable (>75%)
+    B.transform by "center and scale" for not to impact the modeling results
+######   The final data set inlcudes 34 predictors (and one dependent variable) reducing from original 160 predictors.  Number of data samples in training set is 11776 and testing set is 7846.
+
+                     sample training testing final training  
+                    ------ -------- ------- --------------  
+      sample number  19622    11776    7846          11776
+      predictors      160      160     160             35  
+
+##### 3 Model select
+    With final 31 predictors, 7 models (rpart, linear Dscriminant Analysis, naive Bayes, SVM, random forester, gbm bagging, ) were tried to obtain the best fit model with testing data set. The randome forest came out as best accuarte model.  The combined model for the models having accuarcy >90% was also studied, but its result is not as good as random forester model.  The accuacy data are
+    
+                rpart_acc   lda_acc   nb_acc   svm_acc    rf_acc   gbm_acc   bag_acc 
+                ---------  ---------  -------  --------  --------  --------  --------
+       Accuracy 0.4969411  0.5850115  0.714 0.9130767 0.9847056 0.9121846 0.9573031
+
+
+Confusion Matrix and Statistics
+
+       Prediction    A    B    C    D    E
+                A 2223   18    2    0    0  
+                B    6 1488   20    0    0  
+                C    0   11 1340   37    1  
+                D    2    0    6 1248   14  
+                E    1    1    0    1 1427  
+
+  Overall Statistics
+                                          
+               Accuracy : 0.9847          
+                 95% CI : (0.9817, 0.9873)
+    No Information Rate : 0.2845          
+    P-Value [Acc > NIR] : < 2.2e-16       
+                                          
+                  Kappa : 0.9807          
+   Mcnemar's Test P-Value : NA              
+
+   Statistics by Class:
+
+                           Class: A Class: B Class: C Class: D Class: E  
+      Sensitivity            0.9960   0.9802   0.9795   0.9705   0.9896 
+      Specificity            0.9964   0.9959   0.9924   0.9966   0.9995 
+      Pos Pred Value         0.9911   0.9828   0.9647   0.9827   0.9979  
+      Neg Pred Value         0.9984   0.9953   0.9957   0.9942   0.9977 
+      Prevalence             0.2845   0.1935   0.1744   0.1639   0.1838  
+      Detection Rate         0.2833   0.1897   0.1708   0.1591   0.1819 
+      Detection Prevalence   0.2859   0.1930   0.1770   0.1619   0.1823 
+      Balanced Accuracy      0.9962   0.9881   0.9860   0.9835   0.9946
+
+##### 4. Tuning the model and prediction:  using Caret Train function only mtry parameter is available in caret for tuning. The default control setting was used in this study.
+    A. default controlcontrol <- trainControl(method="repeatedcv", number=10, repeats=3)
+    B. the rf model was applied to predict/classy the final 20 test samples in quiz and it is 100% accuarate. Prediction results are:
+    predict(fit_rf,pml_testing6)  
+    B A B A A E D B A A B C B A E E A B B B
+
+
+# Codes
+```{r data, cache=TRUE}
+library(caret)
+download.file(url='https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv',
+              destfile='pml-training.csv', method='auto')
+download.file(url='https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv',
+              destfile='pml-testing.csv', method='auto')
+pml_training<-read.csv("~/R/excise/pml-training.csv")
+pml_testing<-read.csv("~/R/excise/pml-testing.csv")
+#summary(pml_training)
+set.seed(321)
+indtrain<-createDataPartition(y=pml_training$classe,p=0.6,list=F)
+training<-pml_training[indtrain,]
+testing<-pml_training[-indtrain,]
+nzv<-nearZeroVar(training)
+training1<-training[,-nzv]
+testing1<-testing[,-nzv]
+##drop all na columns
+flag1 <-colSums(is.na(training1))== 0
+training2<-training1[,flag1]
+testing2<-testing1[,flag1] 
+## unlated name and data collecting time, book keeping information
+training3<-training2[,-c(1:7)] 
+training4<-training3[,-52]  #last variable: Classe
+#remove highly correlated variables
+descrCor <-  cor(training4)
+highlyCorDescr <- findCorrelation(descrCor, cutoff = .75)
+training5<-training4[,-highlyCorDescr]
+training5<-cbind(training5[,],'classe'=training3[,52])
+preProcValues <- preProcess(training5, method = c("center", "scale"))
+training6 <- predict(preProcValues, training5)
+testing3<-testing2[,-c(1:7)] ## name and time
+testing5<-testing3[,-highlyCorDescr]
+testing6<- predict(preProcValues, testing5)
+pml_testing1<-pml_testing[,-nzv]
+pml_testing2<-pml_testing1[,flag1]
+pml_testing3<-pml_testing2[,-c(1:7)] ## name and time
+pml_testing5<-pml_testing3[,-highlyCorDescr]
+pml_testing6<- predict(preProcValues, pml_testing5)
+## trainsformation: density data for first 4 predictors
+## transparentTheme(trans = .9)
+featurePlot(x = training6[, 1:4],
+            y = training6$classe,
+                  plot = "density",
+                  scales = list(x = list(relation="free"),
+                                y = list(relation="free")),
+                  adjust = 1.5,
+                  pch = "|",
+                  layout = c(4,1),
+                  auto.key = list(columns = 5))
+rm(pml_training,training,training1,training2,training3,training4,training5)
+rm(testing,testing1,testing2,testing3,testing5)
+rm(pml_testing,pml_testing1,pml_testing2,pml_testing3,pml_testing5)
+```
+
+## model selection
+1. try all models; not linear model for classification
+lm (not uitable), tree;Esemble model: boosting / bagging / random forest
+2. compare accuacy
+```{r model,eval=T}
+
+library(forecast)
+library(gbm)
+library(rpart)
+library(dplyr)
+library(party)
+library(ipred)
+library(randomForest)
+library(MASS)
+library(klaR)
+library(e1071)
+library(AppliedPredictiveModeling)
+```
+```{r model1,eval=F}
+set.seed(123)
+fit_rpart<-train(classe ~., method='rpart', data=training6)
+rpart_VarImp <- varImp(fit_rpart)
+pred_rpart<-predict(fit_rpart, testing6)
+rpart_acc<-confusionMatrix(pred_rpart, testing6$classe)$overall[1]
+
+fit_lda<-train(classe~., method='lda',data=training6)
+pred_lda<-predict(fit_lda, testing6)
+lda_acc<-confusionMatrix(pred_lda, testing6$classe)$overall[1]
+
+fit_nb<-train(classe~.,method='nb',data=training6)
+pred_nb<-predict(fit_nb, testing6)
+nb_acc<-confusionMatrix(pred_nb, testing6$classe)$overall[1]
+
+fit_svm<-train(classe ~., method="svmRadial",data=training6)
+pred_svm<-predict(fit_svm, testing6)
+svm_acc<-confusionMatrix(pred_svm, testing6$classe)$overall[1]
+```
+```{r model3, cache=T}
+set.seed(123)
+fit_rf<-train(classe ~., method='rf', data=training6)
+rf_VarImp <- varImp(fit_rf)
+pred_rf<-predict(fit_rf, testing6)
+rf_acc<-confusionMatrix(pred_rf, testing6$classe)$overall[1]
+```
+```{r model4, eval=F}
+set.seed(123)
+fit_gbm<-train(classe ~., method='gbm', data=training6,verbose=F)
+gbm_VarImp <- varImp(fit_gbm)
+pred_gbm<-predict(fit_gbm, testing6)
+gbm_acc<-confusionMatrix(pred_gbm, testing6$classe)$overall[1]
+```
+```{r model5, eval=F}
+set.seed(123)
+fit_bag<-train(classe~., method='treebag', data=training6)
+bag_VarImp <- varImp(fit_bag)
+pred_bag<-predict(fit_bag, testing6)
+bag_acc<-confusionMatrix(pred_bag, testing6$classe)$overall[1]
+as.data.frame(cbind(rpart_acc,lda_acc,nb_acc,svm_acc,rf_acc,gbm_acc,bag_acc))
+# rpart_acc   lda_acc   nb_acc   svm_acc    rf_acc   gbm_acc   bag_acc 
+#                ---------  ---------  -------  --------  --------  --------  --------
+       Accuracy 0.4969411  0.5850115  0.714 0.9130767 0.9847056 0.9121846 0.9573031
+
+```
+```{r model6,cache=T, eval=T}
+print(fit_rf$finalModel)
+plot(fit_rf$finalModel)
+rf_VarImp
+plot(rf_VarImp,main='important predictors of Random Forester Model')
+fit_rf
+confusionMatrix(pred_rf, testing6$classe)
+plot(fit_rf, main='Error of Random Forester Model')
+
+predict(fit_rf,pml_testing6)
+```
+```{r model_comb, cache=T, eval=F}
+set.seed(123)
+comb_test<-data.frame(bag_pred=pred_bag,gbm_pred=pred_gbm,rf_pred=pred_rf,svm_pred=pred_svm,'classe'=testing5$classe)
+fit_comb<-train(classe~., method='gam',data=comb_test)
+pred_comb<-predict(fit_comb,comb_test)
+confusionMatrix(pred_comb,testing6$classe)$overall[1] 
+# Accuracy 0.4747642 
+```
