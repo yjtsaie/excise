@@ -1,6 +1,6 @@
-## Write Up for This Study
-
-###Study Goal
+## WriteUp for This Study
+web site for study: https://rawgit.com/yjtsaie/excise/master/excise.html
+### Study Goal
 It is to predict/classify the manner in which the 6 participants did the exercise by using data from accelerometers on the belt, forearm, arm, and dumbell. 
 ### Data
 The training data for this project are available here:
@@ -8,7 +8,7 @@ https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
 The test data are available here:
 https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv 
 #### The classification processes with the given sampling data
-##### 1. Split data into training and test set as 60% vs. 40%
+##### 1. Split data into training and test set as 60% vs. 40% for cross validation
 ##### 2. Preprocess the data to identify better predictors
 A.	remove variables which do not provide information for model: booking information, 
 very high NA ratio variable, near zero variance, high correlated variable (>75%)
@@ -65,28 +65,28 @@ Confusion Matrix and Statistics
       Detection Prevalence   0.2859   0.1930   0.1770   0.1619   0.1823 
       Balanced Accuracy      0.9962   0.9881   0.9860   0.9835   0.9946
 
-
 The top 20 important predictors are
-magnet_dumbbell_z 100.00
-pitch_forearm 82.26
-magnet_belt_y 81.00
-roll_dumbbell 73.96
-roll_forearm 72.30
-roll_arm 53.73
-gyros_belt_z 53.71
-total_accel_dumbbell 50.61
-yaw_dumbbell 49.87
-gyros_dumbbell_y 49.34
-total_accel_belt 48.84
-accel_forearm_x 45.75
-pitch_dumbbell 44.87
-magnet_forearm_z 42.65
-magnet_arm_x 42.64
-magnet_forearm_y 36.46
-magnet_belt_x 36.32
-yaw_arm 35.21
-magnet_forearm_x 34.87
-accel_forearm_z 33.96
+                                          
+               magnet_dumbbell_z 100.00
+    pitch_forearm 82.26
+    magnet_belt_y 81.00
+    roll_dumbbell 73.96
+    roll_forearm 72.30
+    roll_arm 53.73
+    gyros_belt_z 53.71
+    total_accel_dumbbell 50.61
+    yaw_dumbbell 49.87
+    gyros_dumbbell_y 49.34
+    total_accel_belt 48.84
+    accel_forearm_x 45.75
+    pitch_dumbbell 44.87
+    magnet_forearm_z 42.65
+    magnet_arm_x 42.64
+    magnet_forearm_y 36.46
+    magnet_belt_x 36.32
+    yaw_arm 35.21
+    magnet_forearm_x 34.87
+    accel_forearm_z 33.96
 
 ##### 4. Tuning the model and prediction:  using Caret Train function only mtry parameter is available 
 in caret for tuning. The default control setting was used in this study.
